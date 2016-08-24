@@ -48,3 +48,28 @@ func TestTVDB_SeriesSearch_ReturnsInformation(t *testing.T) {
 		t.Errorf("Didn't get the series ID back that we expected")
 	}
 }
+
+func TestTVDB_EpisodesForSeries_ReturnsInformation(t *testing.T) {
+	//	Arrange
+	request := tvdb.EpisodeRequest{
+		SeriesId: 72514}
+
+	//	Act
+	client := tvdb.TVDBClient{}
+	response, err := client.EpisodesForSeries(request)
+
+	//	Assert
+	if err != nil {
+		t.Errorf("Error getting search results: %v", err)
+	}
+
+	if len(response) == 0 {
+		t.Errorf("There are no responses")
+	} else {
+		t.Logf("Got %v episodes back", len(response))
+	}
+
+	if response[0].Id != 5657563 {
+		t.Errorf("Didn't get the episode ID back that we expected")
+	}
+}

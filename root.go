@@ -11,4 +11,7 @@ type TVDBService interface {
 
 	//	Search for a given series
 	SeriesSearch(request SearchRequest) (SearchResponses, error)
+
+	//	Get all episodes for a given seriesId
+	EpisodesForSeries(request EpisodeRequest) ([]EpisodeResponse, error)
 }
