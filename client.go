@@ -76,14 +76,12 @@ func (client *TVDBClient) SeriesSearch(request SearchRequest) (SearchResponses, 
 
 	//	If we don't have a token, get one first:
 	if client.Token == "" {
-		fmt.Printf("GETTING NEW TOKEN")
+
 		_, err := client.Login(AuthRequest{})
 		if err != nil {
 			return retval, fmt.Errorf("Problem authenticating during search: %v", err)
 		}
 	}
-
-	fmt.Printf("USING TOKEN: %v", client.Token)
 
 	//	If the API url isn't set, use the default:
 	if client.ServiceUrl == "" {
