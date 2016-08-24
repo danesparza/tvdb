@@ -20,7 +20,7 @@ type TVDBClient struct {
 }
 
 //	Login and get a bearer token
-func (client TVDBClient) Login(request AuthRequest) (AuthResponse, error) {
+func (client *TVDBClient) Login(request AuthRequest) (AuthResponse, error) {
 	retval := AuthResponse{}
 
 	//	If the API key isn't set, just use the default:
@@ -62,20 +62,28 @@ func (client TVDBClient) Login(request AuthRequest) (AuthResponse, error) {
 		return retval, err
 	}
 
+	//	Store the token:
+	client.Token = retval.Token
+
 	//	Return our response
 	return retval, nil
 }
 
 //	Search for a given TV series
-func (client TVDBClient) SeriesSearch(request SearchRequest) (SearchResponses, error) {
-	//	If we don't have a token, get one first:
-	if client.Token == "" {
-		authResp, _ := client.Login(AuthRequest{})
-		client.Token = authResp.Token
-	}
-
+func (client *TVDBClient) SeriesSearch(request SearchRequest) (SearchResponses, error) {
 	//	Create our return value
 	retval := SearchResponses{}
+
+	//	If we don't have a token, get one first:
+	if client.Token == "" {
+		fmt.Printf("GETTING NEW TOKEN")
+		_, err := client.Login(AuthRequest{})
+		if err != nil {
+			return retval, fmt.Errorf("Problem authenticating during search: %v", err)
+		}
+	}
+
+	fmt.Printf("USING TOKEN: %v", client.Token)
 
 	//	If the API url isn't set, use the default:
 	if client.ServiceUrl == "" {
