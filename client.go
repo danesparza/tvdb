@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"net/http"
 	"net/url"
+	"strconv"
 	"strings"
 )
 
@@ -180,7 +181,7 @@ func (client *TVDBClient) EpisodesForSeries(request EpisodeRequest) ([]EpisodeRe
 	//	Start with page 1
 	for currentPage, lastPage := 1, 1; currentPage <= lastPage; currentPage++ {
 		q := u.Query()
-		q.Set("page", string(currentPage))
+		q.Set("page", strconv.Itoa(currentPage))
 		u.RawQuery = q.Encode()
 
 		//	Create the request:

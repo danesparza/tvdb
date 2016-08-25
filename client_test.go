@@ -98,3 +98,41 @@ func TestTVDB_EpisodesForSeries_ReturnsExpectedCount(t *testing.T) {
 		t.Errorf("Didn't get the episode ID back that we expected")
 	}
 }
+
+func TestTVDB_EpisodesForSeries_CanMap(t *testing.T) {
+	//	Arrange
+	request := tvdb.EpisodeRequest{
+		SeriesId: 72514}
+
+	//	Act
+	client := tvdb.TVDBClient{}
+	response, err := client.EpisodesForSeries(request)
+
+	//	Assert
+	if err != nil {
+		t.Errorf("Error getting search results: %v", err)
+	}
+
+	if len(response) == 0 {
+		t.Errorf("Didn't get any episodes")
+	} else {
+		t.Logf("Got %v episodes back", len(response))
+	}
+
+	//	Load up the map
+	episodes := make(map[string]*tvdb.EpisodeResponse)
+	for _, episode := range response {
+		episodes[episode.EpisodeName] = &episode
+	}
+
+	t.Logf("Created a map with %v items in it", len(episodes))
+
+	//	Check to see if the episode name exists
+	//	and then get its season/episode number:
+	episodeToFind := "Upswept Hare"
+	if episode, ok := episodes[episodeToFind]; ok {
+		t.Logf("Found matching episode: s%ve%v", episode.AiredSeason, episode.AiredEpisodeNumber)
+	} else {
+		t.Errorf("Didn't find the episode '%v'", episodeToFind)
+	}
+}
