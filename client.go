@@ -178,44 +178,48 @@ func (client *TVDBClient) EpisodesForSeries(request EpisodeRequest) ([]EpisodeRe
 	}
 
 	//	Start with page 1
-	q := u.Query()
-	q.Set("page", "1")
-	u.RawQuery = q.Encode()
+	for currentPage, lastPage := 1, 1; currentPage <= lastPage; currentPage++ {
+		q := u.Query()
+		q.Set("page", string(currentPage))
+		u.RawQuery = q.Encode()
 
-	//	Create the request:
-	httpClient := &http.Client{}
-	req, err := http.NewRequest("GET", u.String(), nil)
-	if err != nil {
-		return retval, err
+		//	Create the request:
+		httpClient := &http.Client{}
+		req, err := http.NewRequest("GET", u.String(), nil)
+		if err != nil {
+			return retval, err
+		}
+
+		//	Set our headers:
+		req.Header.Set("Content-Type", "application/json")
+		req.Header.Set("Authorization", "Bearer "+client.Token)
+
+		//	Make the request:
+		res, err := httpClient.Do(req)
+		if res != nil {
+			defer res.Body.Close()
+		}
+		if err != nil {
+			return retval, err
+		}
+
+		if res.StatusCode != 200 {
+			return retval, fmt.Errorf("Call not successful: %v", res.Status)
+		}
+
+		//	Decode the return object
+		episodeResponses := EpisodeResponses{}
+		err = json.NewDecoder(res.Body).Decode(&episodeResponses)
+		if err != nil {
+			return retval, err
+		}
+
+		//	Append our results to the return value
+		retval = append(retval, episodeResponses.Data...)
+
+		//	Update the last page variable:
+		lastPage = episodeResponses.Links.LastPage
 	}
-
-	//	Set our headers:
-	req.Header.Set("Content-Type", "application/json")
-	req.Header.Set("Authorization", "Bearer "+client.Token)
-
-	//	Make the request:
-	res, err := httpClient.Do(req)
-	if res != nil {
-		defer res.Body.Close()
-	}
-	if err != nil {
-		return retval, err
-	}
-
-	if res.StatusCode != 200 {
-		return retval, fmt.Errorf("Call not successful: %v", res.Status)
-	}
-
-	//	Decode the return object
-	episodeResponses := EpisodeResponses{}
-	err = json.NewDecoder(res.Body).Decode(&episodeResponses)
-	if err != nil {
-		return retval, err
-	}
-
-	//	TODO: Page through and get the rest of the episodes:
-	//	Append our results to the return value
-	retval = append(retval, episodeResponses.Data...)
 
 	//	Return our response
 	return retval, nil
