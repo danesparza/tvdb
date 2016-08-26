@@ -33,18 +33,18 @@ func TestTVDB_SeriesSearch_ReturnsInformation(t *testing.T) {
 
 	//	Act
 	client := tvdb.TVDBClient{}
-	response, err := client.SeriesSearch(request)
+	matches, err := client.SeriesSearch(request)
 
 	//	Assert
 	if err != nil {
 		t.Errorf("Error getting search results: %v", err)
 	}
 
-	if len(response.Data) == 0 {
-		t.Errorf("There are no responses")
+	if len(matches) == 0 {
+		t.Errorf("There are no matches")
 	}
 
-	if response.Data[0].Id != 72514 {
+	if matches[0].Id != 72514 {
 		t.Errorf("Didn't get the series ID back that we expected")
 	}
 }

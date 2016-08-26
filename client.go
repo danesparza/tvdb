@@ -71,9 +71,9 @@ func (client *TVDBClient) Login(request AuthRequest) (AuthResponse, error) {
 }
 
 //	Search for a given TV series
-func (client *TVDBClient) SeriesSearch(request SearchRequest) (SearchResponses, error) {
+func (client *TVDBClient) SeriesSearch(request SearchRequest) ([]SeriesInfo, error) {
 	//	Create our return value
-	retval := SearchResponses{}
+	retval := []SeriesInfo{}
 
 	//	If we don't have a token, get one first:
 	if client.Token == "" {
@@ -139,10 +139,12 @@ func (client *TVDBClient) SeriesSearch(request SearchRequest) (SearchResponses, 
 	}
 
 	//	Decode the return object
-	err = json.NewDecoder(res.Body).Decode(&retval)
+	searchResponse := SearchResponses{}
+	err = json.NewDecoder(res.Body).Decode(&searchResponse)
 	if err != nil {
 		return retval, err
 	}
+	retval = searchResponse.Data
 
 	//	Return our response
 	return retval, nil

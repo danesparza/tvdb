@@ -7,7 +7,7 @@ type SearchRequest struct {
 	Zap2ItId string
 }
 
-type SearchResponse struct {
+type SeriesInfo struct {
 	Aliases    []string `json:"aliases"`
 	Banner     string   `json:"banner"`
 	FirstAired string   `json:"firstAired"`
@@ -19,5 +19,5 @@ type SearchResponse struct {
 }
 
 type SearchResponses struct {
-	Data []SearchResponse `json:"data"`
+	Data []SeriesInfo `json:"data"`
 }
