@@ -120,9 +120,9 @@ func TestTVDB_EpisodesForSeries_CanMap(t *testing.T) {
 	}
 
 	//	Load up the map
-	episodes := make(map[string]*tvdb.EpisodeResponse)
+	episodes := make(map[string]tvdb.EpisodeResponse)
 	for _, episode := range response {
-		episodes[episode.EpisodeName] = &episode
+		episodes[episode.EpisodeName] = episode
 	}
 
 	t.Logf("Created a map with %v items in it", len(episodes))
@@ -131,7 +131,9 @@ func TestTVDB_EpisodesForSeries_CanMap(t *testing.T) {
 	//	and then get its season/episode number:
 	episodeToFind := "Upswept Hare"
 	if episode, ok := episodes[episodeToFind]; ok {
-		t.Logf("Found matching episode: s%ve%v", episode.AiredSeason, episode.AiredEpisodeNumber)
+		if episode.AiredSeason != 1953 || episode.AiredEpisodeNumber != 7 {
+			t.Errorf("The episode and season don't match what we expect. Expected s1953e7 - Found: s%ve%v", episode.AiredSeason, episode.AiredEpisodeNumber)
+		}
 	} else {
 		t.Errorf("Didn't find the episode '%v'", episodeToFind)
 	}
