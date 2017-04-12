@@ -79,18 +79,9 @@ func (client *Client) SeriesSearch(request SearchRequest) ([]SeriesInfo, error) 
 	//	Create our return value
 	retval := []SeriesInfo{}
 
-	//	If we don't have a token, get one first:
-	if client.Token == "" {
-
-		_, err := client.Login(AuthRequest{})
-		if err != nil {
-			return retval, fmt.Errorf("Problem authenticating during search: %v", err)
-		}
-	}
-
-	//	If the API url isn't set, use the default:
-	if client.ServiceURL == "" {
-		client.ServiceURL = baseServiceURL
+	//	Initialize our client
+	if err := client.initialize(); err != nil {
+		return retval, err
 	}
 
 	//	Set the API url
@@ -102,6 +93,7 @@ func (client *Client) SeriesSearch(request SearchRequest) ([]SeriesInfo, error) 
 		return retval, err
 	}
 
+	//	Update querystring parameters if necessary
 	q := u.Query()
 
 	if request.Name != "" {
@@ -116,36 +108,14 @@ func (client *Client) SeriesSearch(request SearchRequest) ([]SeriesInfo, error) 
 		q.Set("zap2itId", request.Zap2ItID)
 	}
 
+	//	Encode the querystring
 	u.RawQuery = q.Encode()
 
-	//	Create the request:
-	httpClient := &http.Client{}
-	req, err := http.NewRequest("GET", u.String(), nil)
-	if err != nil {
-		return retval, err
-	}
-
-	//	Set our headers:
-	req.Header.Set("Content-Type", "application/json")
-	req.Header.Set("Authorization", "Bearer "+client.Token)
-
-	//	Make the request:
-	res, err := httpClient.Do(req)
-	if res != nil {
-		defer res.Body.Close()
-	}
-	if err != nil {
-		return retval, err
-	}
-
-	if res.StatusCode != 200 {
-		return retval, fmt.Errorf("Call not successful: %v", res.Status)
-	}
-
-	//	Decode the return object
+	//	Prep the response object
 	searchResponse := SearchResponses{}
-	err = json.NewDecoder(res.Body).Decode(&searchResponse)
-	if err != nil {
+
+	//	Make the API call
+	if err := client.makeAPIcall(u, &searchResponse); err != nil {
 		return retval, err
 	}
 	retval = searchResponse.Data
@@ -159,18 +129,9 @@ func (client *Client) GetUpdated(request UpdatedRequest) ([]UpdatedResponse, err
 	//	Create our return value
 	retval := []UpdatedResponse{}
 
-	//	If we don't have a token, get one first:
-	if client.Token == "" {
-
-		_, err := client.Login(AuthRequest{})
-		if err != nil {
-			return retval, fmt.Errorf("Problem authenticating during get updated: %v", err)
-		}
-	}
-
-	//	If the API url isn't set, use the default:
-	if client.ServiceURL == "" {
-		client.ServiceURL = baseServiceURL
+	//	Initialize our client
+	if err := client.initialize(); err != nil {
+		return retval, err
 	}
 
 	//	Set the API url
@@ -194,34 +155,11 @@ func (client *Client) GetUpdated(request UpdatedRequest) ([]UpdatedResponse, err
 
 	u.RawQuery = q.Encode()
 
-	//	Create the request:
-	httpClient := &http.Client{}
-	req, err := http.NewRequest("GET", u.String(), nil)
-	if err != nil {
-		return retval, err
-	}
-
-	//	Set our headers:
-	req.Header.Set("Content-Type", "application/json")
-	req.Header.Set("Authorization", "Bearer "+client.Token)
-
-	//	Make the request:
-	res, err := httpClient.Do(req)
-	if res != nil {
-		defer res.Body.Close()
-	}
-	if err != nil {
-		return retval, err
-	}
-
-	if res.StatusCode != 200 {
-		return retval, fmt.Errorf("Call not successful: %v", res.Status)
-	}
-
-	//	Decode the return object
+	//	Prep the response object
 	updatedResponses := UpdatedResponses{}
-	err = json.NewDecoder(res.Body).Decode(&updatedResponses)
-	if err != nil {
+
+	//	Make the API call
+	if err := client.makeAPIcall(u, &updatedResponses); err != nil {
 		return retval, err
 	}
 	retval = updatedResponses.Data
@@ -236,18 +174,9 @@ func (client *Client) EpisodesForSeries(request EpisodeRequest) ([]EpisodeRespon
 	//	Create our return value
 	retval := []EpisodeResponse{}
 
-	//	If we don't have a token, get one first:
-	if client.Token == "" {
-
-		_, err := client.Login(AuthRequest{})
-		if err != nil {
-			return retval, fmt.Errorf("Problem authenticating during episodes fetch: %v", err)
-		}
-	}
-
-	//	If the API url isn't set, use the default:
-	if client.ServiceURL == "" {
-		client.ServiceURL = baseServiceURL
+	//	Initialize our client
+	if err := client.initialize(); err != nil {
+		return retval, err
 	}
 
 	//	Set the API url
@@ -267,34 +196,11 @@ func (client *Client) EpisodesForSeries(request EpisodeRequest) ([]EpisodeRespon
 		q.Set("page", strconv.Itoa(currentPage))
 		u.RawQuery = q.Encode()
 
-		//	Create the request:
-		httpClient := &http.Client{}
-		req, err := http.NewRequest("GET", u.String(), nil)
-		if err != nil {
-			return retval, err
-		}
-
-		//	Set our headers:
-		req.Header.Set("Content-Type", "application/json")
-		req.Header.Set("Authorization", "Bearer "+client.Token)
-
-		//	Make the request:
-		res, err := httpClient.Do(req)
-		if res != nil {
-			defer res.Body.Close()
-		}
-		if err != nil {
-			return retval, err
-		}
-
-		if res.StatusCode != 200 {
-			return retval, fmt.Errorf("Call not successful: %v", res.Status)
-		}
-
-		//	Decode the return object
+		//	Prep the response object
 		episodeResponses := EpisodeResponses{}
-		err = json.NewDecoder(res.Body).Decode(&episodeResponses)
-		if err != nil {
+
+		//	Make the API call
+		if err := client.makeAPIcall(u, &episodeResponses); err != nil {
 			return retval, err
 		}
 
@@ -309,13 +215,14 @@ func (client *Client) EpisodesForSeries(request EpisodeRequest) ([]EpisodeRespon
 	return retval, nil
 }
 
-func (client *Client) makeAPIcall(u *url.URL, model interface{}) (interface{}, error) {
+// makeAPIcall uses the url and model information to make the HTTP api call and deserialize the result
+func (client *Client) makeAPIcall(u *url.URL, model interface{}) error {
 
 	//	Create the request:
 	httpClient := &http.Client{}
 	req, err := http.NewRequest("GET", u.String(), nil)
 	if err != nil {
-		return model, err
+		return err
 	}
 
 	//	Set our headers:
@@ -328,18 +235,37 @@ func (client *Client) makeAPIcall(u *url.URL, model interface{}) (interface{}, e
 		defer res.Body.Close()
 	}
 	if err != nil {
-		return model, err
+		return err
 	}
 
 	if res.StatusCode != 200 {
-		return model, fmt.Errorf("Call not successful: %v", res.Status)
+		return fmt.Errorf("Call not successful: %v", res.Status)
 	}
 
 	//	Decode the return object
-	err = json.NewDecoder(res.Body).Decode(&model)
+	err = json.NewDecoder(res.Body).Decode(model)
 	if err != nil {
-		return model, err
+		return err
 	}
 
-	return model, nil
+	return nil
+}
+
+// initialize authenticates & gets a bearer token and ensures the service url is set correctly
+func (client *Client) initialize() error {
+	//	If we don't have a token, get one first:
+	if client.Token == "" {
+
+		_, err := client.Login(AuthRequest{})
+		if err != nil {
+			return fmt.Errorf("Problem authenticating during search: %v", err)
+		}
+	}
+
+	//	If the API url isn't set, use the default:
+	if client.ServiceURL == "" {
+		client.ServiceURL = baseServiceURL
+	}
+
+	return nil
 }
