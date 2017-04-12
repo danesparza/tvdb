@@ -154,7 +154,7 @@ func (client *Client) SeriesSearch(request SearchRequest) ([]SeriesInfo, error) 
 	return retval, nil
 }
 
-//	Get updated id's since a given unixtimestamp
+// GetUpdated gets updated id's since a given unixtimestamp
 func (client *Client) GetUpdated(request UpdatedRequest) ([]UpdatedResponse, error) {
 	//	Create our return value
 	retval := []UpdatedResponse{}
@@ -307,4 +307,39 @@ func (client *Client) EpisodesForSeries(request EpisodeRequest) ([]EpisodeRespon
 
 	//	Return our response
 	return retval, nil
+}
+
+func (client *Client) makeAPIcall(u *url.URL, model interface{}) (interface{}, error) {
+
+	//	Create the request:
+	httpClient := &http.Client{}
+	req, err := http.NewRequest("GET", u.String(), nil)
+	if err != nil {
+		return model, err
+	}
+
+	//	Set our headers:
+	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("Authorization", "Bearer "+client.Token)
+
+	//	Make the request:
+	res, err := httpClient.Do(req)
+	if res != nil {
+		defer res.Body.Close()
+	}
+	if err != nil {
+		return model, err
+	}
+
+	if res.StatusCode != 200 {
+		return model, fmt.Errorf("Call not successful: %v", res.Status)
+	}
+
+	//	Decode the return object
+	err = json.NewDecoder(res.Body).Decode(&model)
+	if err != nil {
+		return model, err
+	}
+
+	return model, nil
 }
