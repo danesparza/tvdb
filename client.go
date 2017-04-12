@@ -10,32 +10,36 @@ import (
 	"strings"
 )
 
+//	For more information on this service, please see the documentation site
+//	located at: https://api.thetvdb.com/swagger
+
 var (
-	baseServiceUrl string = "https://api.thetvdb.com"
-	apiKey         string = "CA1E4A63116B1D87"
+	baseServiceURL = "https://api.thetvdb.com"
+	apiKey         = "CA1E4A63116B1D87"
 )
 
-type TVDBClient struct {
-	ServiceUrl string
+// Client is a service client to the TVDB service
+type Client struct {
+	ServiceURL string
 	Token      string
 }
 
-//	Login and get a bearer token
-func (client *TVDBClient) Login(request AuthRequest) (AuthResponse, error) {
+// Login and get a bearer token
+func (client *Client) Login(request AuthRequest) (AuthResponse, error) {
 	retval := AuthResponse{}
 
 	//	If the API key isn't set, just use the default:
-	if request.ApiKey == "" {
-		request.ApiKey = apiKey
+	if request.APIKey == "" {
+		request.APIKey = apiKey
 	}
 
 	//	If the API url isn't set, use the default:
-	if client.ServiceUrl == "" {
-		client.ServiceUrl = baseServiceUrl
+	if client.ServiceURL == "" {
+		client.ServiceURL = baseServiceURL
 	}
 
 	//	Set the API url
-	apiUrl := client.ServiceUrl + "/login"
+	apiURL := client.ServiceURL + "/login"
 
 	//	Serialize our request to JSON:
 	requestBytes := new(bytes.Buffer)
@@ -48,7 +52,7 @@ func (client *TVDBClient) Login(request AuthRequest) (AuthResponse, error) {
 	requestJSON := strings.NewReader(requestBytes.String())
 
 	//	Post the JSON to the api url
-	res, err := http.Post(apiUrl, "application/json", requestJSON)
+	res, err := http.Post(apiURL, "application/json", requestJSON)
 	if res != nil {
 		defer res.Body.Close()
 	}
@@ -70,8 +74,8 @@ func (client *TVDBClient) Login(request AuthRequest) (AuthResponse, error) {
 	return retval, nil
 }
 
-//	Search for a given TV series
-func (client *TVDBClient) SeriesSearch(request SearchRequest) ([]SeriesInfo, error) {
+// SeriesSearch search for a given TV series
+func (client *Client) SeriesSearch(request SearchRequest) ([]SeriesInfo, error) {
 	//	Create our return value
 	retval := []SeriesInfo{}
 
@@ -85,15 +89,15 @@ func (client *TVDBClient) SeriesSearch(request SearchRequest) ([]SeriesInfo, err
 	}
 
 	//	If the API url isn't set, use the default:
-	if client.ServiceUrl == "" {
-		client.ServiceUrl = baseServiceUrl
+	if client.ServiceURL == "" {
+		client.ServiceURL = baseServiceURL
 	}
 
 	//	Set the API url
-	apiUrl := client.ServiceUrl + "/search/series"
+	apiURL := client.ServiceURL + "/search/series"
 
 	//	Construct our query
-	u, err := url.Parse(apiUrl)
+	u, err := url.Parse(apiURL)
 	if err != nil {
 		return retval, err
 	}
@@ -104,12 +108,12 @@ func (client *TVDBClient) SeriesSearch(request SearchRequest) ([]SeriesInfo, err
 		q.Set("name", request.Name)
 	}
 
-	if request.IMDBId != "" {
-		q.Set("imdbId", request.IMDBId)
+	if request.IMDBID != "" {
+		q.Set("imdbId", request.IMDBID)
 	}
 
-	if request.Zap2ItId != "" {
-		q.Set("zap2itId", request.Zap2ItId)
+	if request.Zap2ItID != "" {
+		q.Set("zap2itId", request.Zap2ItID)
 	}
 
 	u.RawQuery = q.Encode()
@@ -151,7 +155,7 @@ func (client *TVDBClient) SeriesSearch(request SearchRequest) ([]SeriesInfo, err
 }
 
 //	Get updated id's since a given unixtimestamp
-func (client *TVDBClient) GetUpdated(request UpdatedRequest) ([]UpdatedResponse, error) {
+func (client *Client) GetUpdated(request UpdatedRequest) ([]UpdatedResponse, error) {
 	//	Create our return value
 	retval := []UpdatedResponse{}
 
@@ -165,15 +169,15 @@ func (client *TVDBClient) GetUpdated(request UpdatedRequest) ([]UpdatedResponse,
 	}
 
 	//	If the API url isn't set, use the default:
-	if client.ServiceUrl == "" {
-		client.ServiceUrl = baseServiceUrl
+	if client.ServiceURL == "" {
+		client.ServiceURL = baseServiceURL
 	}
 
 	//	Set the API url
-	apiUrl := client.ServiceUrl + "/updated/query"
+	apiURL := client.ServiceURL + "/updated/query"
 
 	//	Construct our query
-	u, err := url.Parse(apiUrl)
+	u, err := url.Parse(apiURL)
 	if err != nil {
 		return retval, err
 	}
@@ -226,8 +230,9 @@ func (client *TVDBClient) GetUpdated(request UpdatedRequest) ([]UpdatedResponse,
 	return retval, nil
 }
 
-//	Search for a given TV series
-func (client *TVDBClient) EpisodesForSeries(request EpisodeRequest) ([]EpisodeResponse, error) {
+// EpisodesForSeries searches for episodes in a given TV series
+func (client *Client) EpisodesForSeries(request EpisodeRequest) ([]EpisodeResponse, error) {
+
 	//	Create our return value
 	retval := []EpisodeResponse{}
 
@@ -241,17 +246,17 @@ func (client *TVDBClient) EpisodesForSeries(request EpisodeRequest) ([]EpisodeRe
 	}
 
 	//	If the API url isn't set, use the default:
-	if client.ServiceUrl == "" {
-		client.ServiceUrl = baseServiceUrl
+	if client.ServiceURL == "" {
+		client.ServiceURL = baseServiceURL
 	}
 
 	//	Set the API url
-	apiUrl := client.ServiceUrl + fmt.Sprintf("/series/%v/episodes", request.SeriesId)
+	apiURL := client.ServiceURL + fmt.Sprintf("/series/%v/episodes", request.SeriesID)
 
 	//	TODO: If we have query options set on our request, update the url to use:
 
 	//	Construct our query
-	u, err := url.Parse(apiUrl)
+	u, err := url.Parse(apiURL)
 	if err != nil {
 		return retval, err
 	}

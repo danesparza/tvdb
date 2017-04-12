@@ -11,7 +11,7 @@ func TestTVDB_Login_ReturnsToken(t *testing.T) {
 	request := tvdb.AuthRequest{}
 
 	//	Act
-	client := tvdb.TVDBClient{}
+	client := tvdb.Client{}
 	response, err := client.Login(request)
 
 	//	Assert
@@ -32,7 +32,7 @@ func TestTVDB_SeriesSearch_ReturnsInformation(t *testing.T) {
 		Name: "Looney Tunes"}
 
 	//	Act
-	client := tvdb.TVDBClient{}
+	client := tvdb.Client{}
 	matches, err := client.SeriesSearch(request)
 
 	//	Assert
@@ -44,7 +44,7 @@ func TestTVDB_SeriesSearch_ReturnsInformation(t *testing.T) {
 		t.Errorf("There are no matches")
 	}
 
-	if matches[0].Id != 72514 {
+	if matches[0].ID != 72514 {
 		t.Errorf("Didn't get the series ID back that we expected")
 	}
 }
@@ -52,10 +52,10 @@ func TestTVDB_SeriesSearch_ReturnsInformation(t *testing.T) {
 func TestTVDB_EpisodesForSeries_ReturnsInformation(t *testing.T) {
 	//	Arrange
 	request := tvdb.EpisodeRequest{
-		SeriesId: 72514}
+		SeriesID: 72514}
 
 	//	Act
-	client := tvdb.TVDBClient{}
+	client := tvdb.Client{}
 	response, err := client.EpisodesForSeries(request)
 
 	//	Assert
@@ -69,7 +69,7 @@ func TestTVDB_EpisodesForSeries_ReturnsInformation(t *testing.T) {
 		t.Logf("Got %v episodes back", len(response))
 	}
 
-	if response[0].Id != 5657563 {
+	if response[0].ID != 5657563 {
 		t.Errorf("Didn't get the episode ID back that we expected")
 	}
 }
@@ -77,10 +77,10 @@ func TestTVDB_EpisodesForSeries_ReturnsInformation(t *testing.T) {
 func TestTVDB_EpisodesForSeries_ReturnsExpectedCount(t *testing.T) {
 	//	Arrange
 	request := tvdb.EpisodeRequest{
-		SeriesId: 305288}
+		SeriesID: 78874}
 
 	//	Act
-	client := tvdb.TVDBClient{}
+	client := tvdb.Client{}
 	response, err := client.EpisodesForSeries(request)
 
 	//	Assert
@@ -88,24 +88,24 @@ func TestTVDB_EpisodesForSeries_ReturnsExpectedCount(t *testing.T) {
 		t.Errorf("Error getting search results: %v", err)
 	}
 
-	if len(response) != 8 {
-		t.Errorf("8 episodes expected, but got %v instead", len(response))
+	if len(response) != 18 {
+		t.Errorf("18 episodes expected, but got %v instead", len(response))
 	} else {
 		t.Logf("Got %v episodes back", len(response))
 	}
 
-	if response[0].Id != 5468124 {
-		t.Errorf("Didn't get the episode ID back that we expected")
+	if response[0].ID != 297989 {
+		t.Errorf("Didn't get the episode ID back that we expected, but got %v instead", response[0].ID)
 	}
 }
 
 func TestTVDB_EpisodesForSeries_CanMap(t *testing.T) {
 	//	Arrange
 	request := tvdb.EpisodeRequest{
-		SeriesId: 72514}
+		SeriesID: 72514}
 
 	//	Act
-	client := tvdb.TVDBClient{}
+	client := tvdb.Client{}
 	response, err := client.EpisodesForSeries(request)
 
 	//	Assert

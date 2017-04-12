@@ -1,23 +1,25 @@
 package tvdb
 
-//	AuthRequest represents the login parameters
+// SearchRequest represents the request
 type SearchRequest struct {
 	Name     string
-	IMDBId   string
-	Zap2ItId string
+	IMDBID   string
+	Zap2ItID string
 }
 
+// SeriesInfo represents TV series information in the search response
 type SeriesInfo struct {
 	Aliases    []string `json:"aliases"`
 	Banner     string   `json:"banner"`
 	FirstAired string   `json:"firstAired"`
-	Id         int      `json:"id"`
+	ID         int      `json:"id"`
 	Network    string   `json:"network"`
 	Overview   string   `json:"overview"`
 	SeriesName string   `json:"seriesName"`
 	Status     string   `json:"status"`
 }
 
+// SearchResponses represents a search response from the service
 type SearchResponses struct {
 	Data []SeriesInfo `json:"data"`
 }
