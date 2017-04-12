@@ -118,37 +118,16 @@ func (client *Client) SeriesSearch(request SearchRequest) ([]SeriesInfo, error) 
 
 	u.RawQuery = q.Encode()
 
-	//	Create the request:
-	httpClient := &http.Client{}
-	req, err := http.NewRequest("GET", u.String(), nil)
+	model := SearchResponses{}
+
+	//	Make the API call using our url and model:
+	response, err := client.makeAPIcall(u, model)
 	if err != nil {
 		return retval, err
 	}
 
-	//	Set our headers:
-	req.Header.Set("Content-Type", "application/json")
-	req.Header.Set("Authorization", "Bearer "+client.Token)
-
-	//	Make the request:
-	res, err := httpClient.Do(req)
-	if res != nil {
-		defer res.Body.Close()
-	}
-	if err != nil {
-		return retval, err
-	}
-
-	if res.StatusCode != 200 {
-		return retval, fmt.Errorf("Call not successful: %v", res.Status)
-	}
-
-	//	Decode the return object
-	searchResponse := SearchResponses{}
-	err = json.NewDecoder(res.Body).Decode(&searchResponse)
-	if err != nil {
-		return retval, err
-	}
-	retval = searchResponse.Data
+	//	Use type assertion to return to concrete value
+	retval = response.(SearchResponses).Data
 
 	//	Return our response
 	return retval, nil
@@ -307,4 +286,40 @@ func (client *Client) EpisodesForSeries(request EpisodeRequest) ([]EpisodeRespon
 
 	//	Return our response
 	return retval, nil
+}
+
+// makeAPIcall makes the http api call using the url information and returns either the deserialized model or an error
+func (client *Client) makeAPIcall(u *url.URL, model interface{}) (interface{}, error) {
+
+	//	Create the request:
+	httpClient := &http.Client{}
+	req, err := http.NewRequest("GET", u.String(), nil)
+	if err != nil {
+		return model, err
+	}
+
+	//	Set our headers:
+	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("Authorization", "Bearer "+client.Token)
+
+	//	Make the request:
+	res, err := httpClient.Do(req)
+	if res != nil {
+		defer res.Body.Close()
+	}
+	if err != nil {
+		return model, err
+	}
+
+	if res.StatusCode != 200 {
+		return model, fmt.Errorf("Call not successful: %v", res.Status)
+	}
+
+	//	Decode the return object
+	err = json.NewDecoder(res.Body).Decode(&model)
+	if err != nil {
+		return model, err
+	}
+
+	return model, nil
 }
