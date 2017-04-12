@@ -22,6 +22,7 @@ var (
 type Client struct {
 	ServiceURL string
 	Token      string
+	Language   string
 }
 
 // Login and get a bearer token
@@ -228,6 +229,9 @@ func (client *Client) makeAPIcall(u *url.URL, model interface{}) error {
 	//	Set our headers:
 	req.Header.Set("Content-Type", "application/json")
 	req.Header.Set("Authorization", "Bearer "+client.Token)
+	if client.Language != "" {
+		req.Header.Set("Accept-Language", client.Language)
+	}
 
 	//	Make the request:
 	res, err := httpClient.Do(req)
