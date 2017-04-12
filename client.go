@@ -150,7 +150,7 @@ func (client *TVDBClient) SeriesSearch(request SearchRequest) ([]SeriesInfo, err
 	return retval, nil
 }
 
-//	Search for a given TV series
+//	Get updated id's since a given unixtimestamp
 func (client *TVDBClient) GetUpdated(request UpdatedRequest) ([]UpdatedResponse, error) {
 	//	Create our return value
 	retval := []UpdatedResponse{}
@@ -160,7 +160,7 @@ func (client *TVDBClient) GetUpdated(request UpdatedRequest) ([]UpdatedResponse,
 
 		_, err := client.Login(AuthRequest{})
 		if err != nil {
-			return retval, fmt.Errorf("Problem authenticating during search: %v", err)
+			return retval, fmt.Errorf("Problem authenticating during get updated: %v", err)
 		}
 	}
 
