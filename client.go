@@ -154,8 +154,85 @@ func (client *Client) SeriesSearch(request SearchRequest) ([]SeriesInfo, error) 
 	return retval, nil
 }
 
+//	Get updated id's since a given unixtimestamp
+func (client *Client) GetUpdated(request UpdatedRequest) ([]UpdatedResponse, error) {
+	//	Create our return value
+	retval := []UpdatedResponse{}
+
+	//	If we don't have a token, get one first:
+	if client.Token == "" {
+
+		_, err := client.Login(AuthRequest{})
+		if err != nil {
+			return retval, fmt.Errorf("Problem authenticating during get updated: %v", err)
+		}
+	}
+
+	//	If the API url isn't set, use the default:
+	if client.ServiceURL == "" {
+		client.ServiceURL = baseServiceURL
+	}
+
+	//	Set the API url
+	apiURL := client.ServiceURL + "/updated/query"
+
+	//	Construct our query
+	u, err := url.Parse(apiURL)
+	if err != nil {
+		return retval, err
+	}
+
+	q := u.Query()
+
+	if request.FromTime != 0 {
+		q.Set("fromTime", strconv.FormatInt(request.FromTime, 10))
+	}
+
+	if request.ToTime != 0 {
+		q.Set("toTime", strconv.FormatInt(request.ToTime, 10))
+	}
+
+	u.RawQuery = q.Encode()
+
+	//	Create the request:
+	httpClient := &http.Client{}
+	req, err := http.NewRequest("GET", u.String(), nil)
+	if err != nil {
+		return retval, err
+	}
+
+	//	Set our headers:
+	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("Authorization", "Bearer "+client.Token)
+
+	//	Make the request:
+	res, err := httpClient.Do(req)
+	if res != nil {
+		defer res.Body.Close()
+	}
+	if err != nil {
+		return retval, err
+	}
+
+	if res.StatusCode != 200 {
+		return retval, fmt.Errorf("Call not successful: %v", res.Status)
+	}
+
+	//	Decode the return object
+	updatedResponses := UpdatedResponses{}
+	err = json.NewDecoder(res.Body).Decode(&updatedResponses)
+	if err != nil {
+		return retval, err
+	}
+	retval = updatedResponses.Data
+
+	//	Return our response
+	return retval, nil
+}
+
 // EpisodesForSeries searches for episodes in a given TV series
 func (client *Client) EpisodesForSeries(request EpisodeRequest) ([]EpisodeResponse, error) {
+
 	//	Create our return value
 	retval := []EpisodeResponse{}
 
