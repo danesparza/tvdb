@@ -22,7 +22,7 @@ type EpisodeResponse struct {
 	DVDSeason          int             `json:"dvdSeason"`
 	EpisodeName        string          `json:"episodeName"`
 	FirstAired         string          `json:"firstAired"`
-	ID                 int             `json:"id"`
+	ID                 int             `json:"id`
 	Language           EpisodeLanguage `json:"language"`
 	Overview           string          `json:"overview"`
 }
