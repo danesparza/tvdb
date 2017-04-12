@@ -151,6 +151,82 @@ func (client *TVDBClient) SeriesSearch(request SearchRequest) ([]SeriesInfo, err
 }
 
 //	Search for a given TV series
+func (client *TVDBClient) GetUpdated(request UpdatedRequest) ([]UpdatedResponse, error) {
+	//	Create our return value
+	retval := []UpdatedResponse{}
+
+	//	If we don't have a token, get one first:
+	if client.Token == "" {
+
+		_, err := client.Login(AuthRequest{})
+		if err != nil {
+			return retval, fmt.Errorf("Problem authenticating during search: %v", err)
+		}
+	}
+
+	//	If the API url isn't set, use the default:
+	if client.ServiceUrl == "" {
+		client.ServiceUrl = baseServiceUrl
+	}
+
+	//	Set the API url
+	apiUrl := client.ServiceUrl + "/updated/query"
+
+	//	Construct our query
+	u, err := url.Parse(apiUrl)
+	if err != nil {
+		return retval, err
+	}
+
+	q := u.Query()
+
+	if request.FromTime != 0 {
+		q.Set("fromTime", strconv.FormatInt(request.FromTime, 10))
+	}
+
+	if request.ToTime != 0 {
+		q.Set("toTime", strconv.FormatInt(request.ToTime, 10))
+	}
+
+	u.RawQuery = q.Encode()
+
+	//	Create the request:
+	httpClient := &http.Client{}
+	req, err := http.NewRequest("GET", u.String(), nil)
+	if err != nil {
+		return retval, err
+	}
+
+	//	Set our headers:
+	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("Authorization", "Bearer "+client.Token)
+
+	//	Make the request:
+	res, err := httpClient.Do(req)
+	if res != nil {
+		defer res.Body.Close()
+	}
+	if err != nil {
+		return retval, err
+	}
+
+	if res.StatusCode != 200 {
+		return retval, fmt.Errorf("Call not successful: %v", res.Status)
+	}
+
+	//	Decode the return object
+	updatedResponses := UpdatedResponses{}
+	err = json.NewDecoder(res.Body).Decode(&updatedResponses)
+	if err != nil {
+		return retval, err
+	}
+	retval = updatedResponses.Data
+
+	//	Return our response
+	return retval, nil
+}
+
+//	Search for a given TV series
 func (client *TVDBClient) EpisodesForSeries(request EpisodeRequest) ([]EpisodeResponse, error) {
 	//	Create our return value
 	retval := []EpisodeResponse{}
