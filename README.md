@@ -8,9 +8,9 @@ import "github.com/danesparza/tvdb"
 
 ...
 
-// Create a request & a client
-request := tvdb.SearchRequest{Name: "Looney Tunes"}
+// Create a client and search request
 client := tvdb.Client{}
+request := tvdb.SearchRequest{Name: "Looney Tunes"}
 
 //  Search for the series
 matches, err := client.SeriesSearch(request)
