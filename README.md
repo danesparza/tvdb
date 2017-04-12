@@ -4,15 +4,21 @@ TVDB v2.0 API wrapper for Go
 ## Example
 
 ``` Go
-// Create a request & a client
-request := tvdb.SearchRequest{Name: "Looney Tunes"}
-client := tvdb.Client{}
+import (
+	"github.com/danesparza/tvdb"
+)
 
-//  Search for the series
-matches, err := client.SeriesSearch(request)
+func main() {
+  // Create a request & a client
+  request := tvdb.SearchRequest{Name: "Looney Tunes"}
+  client := tvdb.Client{}
 
-//  Check for errors or use matches...
-if matches[0].ID != 72514 {
-  log.Printf("Didn't get the series ID back that we expected")
+  //  Search for the series
+  matches, err := client.SeriesSearch(request)
+
+  //  Check for errors or use matches...
+  if matches[0].ID != 72514 {
+    log.Printf("Didn't get the series ID back that we expected")
+  }
 }
 ```
