@@ -273,3 +273,90 @@ func (client *Client) initialize() error {
 
 	return nil
 }
+
+// GetSeriesActors gets all available actors for a given show id
+func (client *Client) GetSeriesActors(request SeriesRequest) ([]SeriesActorResponse, error) {
+	//	Create our return value
+	retval := []SeriesActorResponse{}
+
+	//	Initialize our client
+	if err := client.initialize(); err != nil {
+		return retval, err
+	}
+
+	//	Set the API url
+	apiURL := client.ServiceURL + fmt.Sprintf("/series/%v/actors", request.SeriesID)
+
+	//	Construct our query
+	u, err := url.Parse(apiURL)
+	if err != nil {
+		return retval, err
+	}
+
+	q := u.Query()
+
+	u.RawQuery = q.Encode()
+
+	//	Prep the response object
+	object := SeriesActorResponses{}
+
+	//	Make the API call
+	if err := client.makeAPIcall(u, &object); err != nil {
+		return retval, err
+	}
+	retval = object.Data
+
+	//	Return our response
+	return retval, nil
+}
+
+// GetSeriesImages gets images for a given show id and image type, if no KeyType is given it defaults to poster
+func (client *Client) GetSeriesImages(request SeriesImageQueryRequest) ([]SeriesImageQueryResponse, error) {
+	//	Create our return value
+	retval := []SeriesImageQueryResponse{}
+
+	//	Initialize our client
+	if err := client.initialize(); err != nil {
+		return retval, err
+	}
+
+	//	Set the API url
+	apiURL := client.ServiceURL + fmt.Sprintf("/series/%v/images/query", request.SeriesID)
+
+	//	Construct our query
+	u, err := url.Parse(apiURL)
+	if err != nil {
+		return retval, err
+	}
+
+	q := u.Query()
+
+	if request.KeyType != "" {
+		q.Set("keyType", request.KeyType)
+	} else {
+		// make sure we have a keyType set!
+		q.Set("keyType", "poster")
+	}
+
+	if request.Resulution != "" {
+		q.Set("resolution", request.Resulution)
+	}
+
+	if request.SubKey != "" {
+		q.Set("subKey", request.SubKey)
+	}
+
+	u.RawQuery = q.Encode()
+
+	//	Prep the response object
+	object := SeriesImageQueryResponses{}
+
+	//	Make the API call
+	if err := client.makeAPIcall(u, &object); err != nil {
+		return retval, err
+	}
+	retval = object.Data
+
+	//	Return our response
+	return retval, nil
+}
