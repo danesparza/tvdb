@@ -169,6 +169,43 @@ func (client *Client) GetUpdated(request UpdatedRequest) ([]UpdatedResponse, err
 	return retval, nil
 }
 
+// GetSeries get's information about a given TV series
+func (client *Client) GetSeries(request SeriesRequest) (SeriesResponse, error) {
+
+	//	Create our return value
+	retval := SeriesResponse{}
+
+	//	Initialize our client
+	if err := client.initialize(); err != nil {
+		return retval, err
+	}
+
+	//	Set the API url
+	apiURL := client.ServiceURL + fmt.Sprintf("/series/%v", request.SeriesID)
+
+	//	Construct our query
+	u, err := url.Parse(apiURL)
+	if err != nil {
+		return retval, err
+	}
+
+	q := u.Query()
+
+	u.RawQuery = q.Encode()
+
+	//	Prep the response object
+	object := SeriesResponses{}
+
+	//	Make the API call
+	if err := client.makeAPIcall(u, &object); err != nil {
+		return retval, err
+	}
+	retval = object.Data
+
+	//	Return our response
+	return retval, nil
+}
+
 // EpisodesForSeries searches for episodes in a given TV series
 func (client *Client) EpisodesForSeries(request EpisodeRequest) ([]EpisodeResponse, error) {
 

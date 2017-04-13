@@ -1,5 +1,40 @@
 package tvdb
 
+// SeriesRequest is used to request additional series information
+type SeriesRequest struct {
+	SeriesID int `json:"id"`
+}
+
+// SeriesResponse represents a reponse for series information from the TVDB service
+type SeriesResponse struct {
+	Added           string   `json:"added"`
+	AirsDayOfWeek   string   `json:"airsDayOfWeek"`
+	AirsTime        string   `json:"airsTime"`
+	Aliases         []string `json:"aliases"`
+	Banner          string   `json:"banner"`
+	FirstAired      string   `json:"firstAired"`
+	Genre           []string `json:"genre"`
+	ID              int      `json:"id"`
+	ImdbID          string   `json:"imdbId"`
+	LastUpdated     int      `json:"lastUpdated"`
+	Network         string   `json:"network"`
+	NetworkID       string   `json:"networkId"`
+	Overview        string   `json:"overview"`
+	Rating          string   `json:"rating"`
+	Runtime         string   `json:"runtime"`
+	SeriesID        string   `json:"seriesId"`
+	SeriesName      string   `json:"seriesName"`
+	SiteRating      float64  `json:"siteRating"`
+	SiteRatingCount int      `json:"siteRatingCount"`
+	Status          string   `json:"status"`
+	Zap2itID        string   `json:"zap2itId"`
+}
+
+// SeriesResponses represents the list of responses to get series information
+type SeriesResponses struct {
+	Data SeriesResponse `json:"data"`
+}
+
 // EpisodeRequest represents a request to get episode information
 type EpisodeRequest struct {
 	SeriesID int
@@ -45,11 +80,6 @@ type EpisodeResponseLinks struct {
 type EpisodeResponses struct {
 	Links EpisodeResponseLinks `json:"links"`
 	Data  []EpisodeResponse    `json:"data"`
-}
-
-// SeriesRequest is used to request additional series information
-type SeriesRequest struct {
-	SeriesID int `json:"id"`
 }
 
 // SeriesActorResponse contains information about a single actor
