@@ -4,8 +4,10 @@ TVDB v2.0 API wrapper for Go
 ## Example
 
 ``` Go
-import "github.com/danesparza/tvdb"
-
+import (
+  "github.com/danesparza/tvdb"
+  "fmt"
+)
 ...
 
 // Create a client and search request
@@ -15,9 +17,22 @@ request := tvdb.SeriesEpisodesRequest{Name: "Looney Tunes"}
 //  Search for the series
 responses, err := client.SeriesSearch(request)
 
-//  Check for errors or use responses...
+//  Use responses...
 if responses[0].ID != 72514 {
-  log.Printf("Didn't get the series ID back that we expected")
+  fmt.Printf("Didn't get the series ID back that we expected")
+}
+
+//	Loop through the TV series information in the resopnse:
+for _, response := range responses {
+  fmt.Printf("Series name: %v", response.SeriesName)
 }
   
+```
+
+This should print:
+```
+Series name: Looney Tunes
+Series name: The Looney Tunes Show (2011)
+Series name: ** 403: Series Not Permitted **
+Series name: Baby Looney Tunes
 ```
