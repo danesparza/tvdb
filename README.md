@@ -1,8 +1,10 @@
 # tvdb [![CircleCI](https://circleci.com/gh/danesparza/tvdb.svg?style=svg)](https://circleci.com/gh/danesparza/tvdb)
 TVDB v2.0 API wrapper for Go
 
+## Installation
+`go get github.com/danesparza/tvdb` 
+
 ## Example
-Be sure to `go get github.com/danesparza/tvdb` and then import the package in your code first
 
 ``` Go
 // Create a client and search request
