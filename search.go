@@ -1,14 +1,14 @@
 package tvdb
 
-// SearchRequest represents the request
-type SearchRequest struct {
+// SeriesSearchRequest represents the request
+type SeriesSearchRequest struct {
 	Name     string
 	IMDBID   string
 	Zap2ItID string
 }
 
-// SeriesInfo represents TV series information in the search response
-type SeriesInfo struct {
+// SeriesSearchData represents TV series information in the search response
+type SeriesSearchData struct {
 	Aliases    []string `json:"aliases"`
 	Banner     string   `json:"banner"`
 	FirstAired string   `json:"firstAired"`
@@ -20,6 +20,6 @@ type SeriesInfo struct {
 }
 
 // SearchResponses represents a search response from the service
-type SearchResponses struct {
-	Data []SeriesInfo `json:"data"`
+type SeriesSearchResponses struct {
+	Data []SeriesSearchData `json:"data"`
 }

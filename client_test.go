@@ -28,7 +28,7 @@ func TestTVDB_Login_ReturnsToken(t *testing.T) {
 
 func TestTVDB_SeriesSearch_ReturnsInformation(t *testing.T) {
 	//	Arrange
-	request := tvdb.SearchRequest{
+	request := tvdb.SeriesSearchRequest{
 		Name: "Looney Tunes"}
 
 	//	Act
@@ -51,7 +51,7 @@ func TestTVDB_SeriesSearch_ReturnsInformation(t *testing.T) {
 
 func TestTVDB_EpisodesForSeries_ReturnsInformation(t *testing.T) {
 	//	Arrange
-	request := tvdb.EpisodeRequest{
+	request := tvdb.SeriesEpisodesRequest{
 		SeriesID: 72514}
 
 	//	Act
@@ -76,7 +76,7 @@ func TestTVDB_EpisodesForSeries_ReturnsInformation(t *testing.T) {
 
 func TestTVDB_EpisodesForSeries_ReturnsExpectedCount(t *testing.T) {
 	//	Arrange
-	request := tvdb.EpisodeRequest{
+	request := tvdb.SeriesEpisodesRequest{
 		SeriesID: 78874}
 
 	//	Act
@@ -101,7 +101,7 @@ func TestTVDB_EpisodesForSeries_ReturnsExpectedCount(t *testing.T) {
 
 func TestTVDB_EpisodesForSeries_CanMap(t *testing.T) {
 	//	Arrange
-	request := tvdb.EpisodeRequest{
+	request := tvdb.SeriesEpisodesRequest{
 		SeriesID: 72514}
 
 	//	Act
@@ -120,7 +120,7 @@ func TestTVDB_EpisodesForSeries_CanMap(t *testing.T) {
 	}
 
 	//	Load up the map
-	episodes := make(map[string]tvdb.EpisodeResponse)
+	episodes := make(map[string]tvdb.BasicEpisode)
 	for _, episode := range response {
 		episodes[episode.EpisodeName] = episode
 	}

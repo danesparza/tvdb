@@ -76,9 +76,9 @@ func (client *Client) Login(request AuthRequest) (AuthResponse, error) {
 }
 
 // SeriesSearch search for a given TV series
-func (client *Client) SeriesSearch(request SearchRequest) ([]SeriesInfo, error) {
+func (client *Client) SeriesSearch(request SeriesSearchRequest) ([]SeriesSearchData, error) {
 	//	Create our return value
-	retval := []SeriesInfo{}
+	retval := []SeriesSearchData{}
 
 	//	Initialize our client
 	if err := client.initialize(); err != nil {
@@ -113,7 +113,7 @@ func (client *Client) SeriesSearch(request SearchRequest) ([]SeriesInfo, error) 
 	u.RawQuery = q.Encode()
 
 	//	Prep the response object
-	searchResponse := SearchResponses{}
+	searchResponse := SeriesSearchResponses{}
 
 	//	Make the API call
 	if err := client.makeAPIcall(u, &searchResponse); err != nil {
@@ -170,10 +170,10 @@ func (client *Client) GetUpdated(request UpdatedRequest) ([]UpdatedResponse, err
 }
 
 // GetSeries get's information about a given TV series
-func (client *Client) GetSeries(request SeriesRequest) (SeriesResponse, error) {
+func (client *Client) GetSeries(request SeriesRequest) (Series, error) {
 
 	//	Create our return value
-	retval := SeriesResponse{}
+	retval := Series{}
 
 	//	Initialize our client
 	if err := client.initialize(); err != nil {
@@ -194,7 +194,7 @@ func (client *Client) GetSeries(request SeriesRequest) (SeriesResponse, error) {
 	u.RawQuery = q.Encode()
 
 	//	Prep the response object
-	object := SeriesResponses{}
+	object := SeriesData{}
 
 	//	Make the API call
 	if err := client.makeAPIcall(u, &object); err != nil {
@@ -207,10 +207,10 @@ func (client *Client) GetSeries(request SeriesRequest) (SeriesResponse, error) {
 }
 
 // EpisodesForSeries searches for episodes in a given TV series
-func (client *Client) EpisodesForSeries(request EpisodeRequest) ([]EpisodeResponse, error) {
+func (client *Client) EpisodesForSeries(request SeriesEpisodesRequest) ([]BasicEpisode, error) {
 
 	//	Create our return value
-	retval := []EpisodeResponse{}
+	retval := []BasicEpisode{}
 
 	//	Initialize our client
 	if err := client.initialize(); err != nil {
@@ -312,9 +312,9 @@ func (client *Client) initialize() error {
 }
 
 // GetSeriesActors gets all available actors for a given show id
-func (client *Client) GetSeriesActors(request SeriesRequest) ([]SeriesActorResponse, error) {
+func (client *Client) GetSeriesActors(request SeriesRequest) ([]SeriesActorsData, error) {
 	//	Create our return value
-	retval := []SeriesActorResponse{}
+	retval := []SeriesActorsData{}
 
 	//	Initialize our client
 	if err := client.initialize(); err != nil {
@@ -335,7 +335,7 @@ func (client *Client) GetSeriesActors(request SeriesRequest) ([]SeriesActorRespo
 	u.RawQuery = q.Encode()
 
 	//	Prep the response object
-	object := SeriesActorResponses{}
+	object := SeriesActors{}
 
 	//	Make the API call
 	if err := client.makeAPIcall(u, &object); err != nil {
@@ -348,9 +348,9 @@ func (client *Client) GetSeriesActors(request SeriesRequest) ([]SeriesActorRespo
 }
 
 // GetSeriesImages gets images for a given show id and image type, if no KeyType is given it defaults to poster
-func (client *Client) GetSeriesImages(request SeriesImageQueryRequest) ([]SeriesImageQueryResponse, error) {
+func (client *Client) GetSeriesImages(request SeriesImageQueryRequest) ([]SeriesImagesCount, error) {
 	//	Create our return value
-	retval := []SeriesImageQueryResponse{}
+	retval := []SeriesImagesCount{}
 
 	//	Initialize our client
 	if err := client.initialize(); err != nil {
@@ -386,7 +386,7 @@ func (client *Client) GetSeriesImages(request SeriesImageQueryRequest) ([]Series
 	u.RawQuery = q.Encode()
 
 	//	Prep the response object
-	object := SeriesImageQueryResponses{}
+	object := SeriesImagesCounts{}
 
 	//	Make the API call
 	if err := client.makeAPIcall(u, &object); err != nil {

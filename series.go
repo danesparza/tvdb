@@ -5,8 +5,8 @@ type SeriesRequest struct {
 	SeriesID int `json:"id"`
 }
 
-// SeriesResponse represents a reponse for series information from the TVDB service
-type SeriesResponse struct {
+// Series represents a reponse for series information from the TVDB service
+type Series struct {
 	Added           string   `json:"added"`
 	AirsDayOfWeek   string   `json:"airsDayOfWeek"`
 	AirsTime        string   `json:"airsTime"`
@@ -30,13 +30,13 @@ type SeriesResponse struct {
 	Zap2itID        string   `json:"zap2itId"`
 }
 
-// SeriesResponses represents the list of responses to get series information
-type SeriesResponses struct {
-	Data SeriesResponse `json:"data"`
+// SeriesData represents the list of responses to get series information
+type SeriesData struct {
+	Data Series `json:"data"`
 }
 
-// EpisodeRequest represents a request to get episode information
-type EpisodeRequest struct {
+// SeriesEpisodesRequest represents a request to get episode information for a series
+type SeriesEpisodesRequest struct {
 	SeriesID int
 
 	/* Query parameters */
@@ -47,29 +47,23 @@ type EpisodeRequest struct {
 	IMDBId       int `json:"imdbId"`
 }
 
-// EpisodeResponse represents a reponse for episode information from the TVDB service
-type EpisodeResponse struct {
-	AbsoluteNumber     int             `json:"absoluteNumber"`
-	AiredEpisodeNumber int             `json:"airedEpisodeNumber"`
-	AiredSeason        int             `json:"airedSeason"`
-	AiredSeasonID      int             `json:"airedSeasonID"`
-	DVDEpisodeNumber   int             `json:"dvdEpisodeNumber"`
-	DVDSeason          int             `json:"dvdSeason"`
-	EpisodeName        string          `json:"episodeName"`
-	FirstAired         string          `json:"firstAired"`
-	ID                 int             `json:"id"`
-	Language           EpisodeLanguage `json:"language"`
-	Overview           string          `json:"overview"`
+// BasicEpisode represents a reponse for episode information from the TVDB service
+type BasicEpisode struct {
+	AbsoluteNumber     int    `json:"absoluteNumber"`
+	AiredEpisodeNumber int    `json:"airedEpisodeNumber"`
+	AiredSeason        int    `json:"airedSeason"`
+	AiredSeasonID      int    `json:"airedSeasonID"`
+	DVDEpisodeNumber   int    `json:"dvdEpisodeNumber"`
+	DVDSeason          int    `json:"dvdSeason"`
+	EpisodeName        string `json:"episodeName"`
+	FirstAired         string `json:"firstAired"`
+	ID                 int    `json:"id"`
+	LastUpdated        int    `json:"lastUpdated"`
+	Overview           string `json:"overview"`
 }
 
-// EpisodeLanguage represents the spoken language of the given episode
-type EpisodeLanguage struct {
-	EpisodeName     string `json:"episodeName"`
-	EpisodeOverview string `json:"overview"`
-}
-
-// EpisodeResponseLinks represents the paging information for multiple episode responses
-type EpisodeResponseLinks struct {
+// Links represents the paging information for multiple episode responses
+type Links struct {
 	FirstPage    int `json:"first"`
 	LastPage     int `json:"last"`
 	NextPage     int `json:"next"`
@@ -78,12 +72,12 @@ type EpisodeResponseLinks struct {
 
 // EpisodeResponses represents the list of responses to get episode information
 type EpisodeResponses struct {
-	Links EpisodeResponseLinks `json:"links"`
-	Data  []EpisodeResponse    `json:"data"`
+	Links Links          `json:"links"`
+	Data  []BasicEpisode `json:"data"`
 }
 
-// SeriesActorResponse contains information about a single actor
-type SeriesActorResponse struct {
+// SeriesActorsData contains information about a single actor
+type SeriesActorsData struct {
 	ID          int    `json:"id"`
 	Image       string `json:"image"`
 	ImageAdded  string `json:"imageAdded"`
@@ -95,9 +89,9 @@ type SeriesActorResponse struct {
 	SortOrder   int    `json:"sortOrder"`
 }
 
-// SeriesActorResponses is the response of the api when asking for authors
-type SeriesActorResponses struct {
-	Data []SeriesActorResponse `json:"data"`
+// SeriesActors is the response of the api when asking for authors
+type SeriesActors struct {
+	Data []SeriesActorsData `json:"data"`
 }
 
 // SeriesImageQueryRequest used to query images for a given series and type
@@ -108,8 +102,8 @@ type SeriesImageQueryRequest struct {
 	SubKey     string `json:"subKey"`
 }
 
-// SeriesImageQueryResponse one single image response
-type SeriesImageQueryResponse struct {
+// SeriesImagesCount one single image response
+type SeriesImagesCount struct {
 	FileName    string             `json:"fileName"`
 	ID          int                `json:"id"`
 	KeyType     string             `json:"keyType"`
@@ -120,7 +114,7 @@ type SeriesImageQueryResponse struct {
 	Thumbnail   string             `json:"thumbnail"`
 }
 
-// SeriesImageQueryResponses is the response of the api when asking for images
-type SeriesImageQueryResponses struct {
-	Data []SeriesImageQueryResponse `json:"data"`
+// SeriesImagesCounts is the response of the api when asking for images
+type SeriesImagesCounts struct {
+	Data []SeriesImagesCount `json:"data"`
 }
