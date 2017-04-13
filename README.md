@@ -2,25 +2,15 @@
 TVDB v2.0 API wrapper for Go
 
 ## Example
+Be sure to `go get github.com/danesparza/tvdb` and then import the package in your code first
 
 ``` Go
-import (
-  "github.com/danesparza/tvdb"
-  "fmt"
-)
-...
-
 // Create a client and search request
 client := tvdb.Client{}
 request := tvdb.SeriesEpisodesRequest{Name: "Looney Tunes"}
 
 //  Search for the series
 responses, err := client.SeriesSearch(request)
-
-//  Use responses...
-if responses[0].ID != 72514 {
-  fmt.Printf("Didn't get the series ID back that we expected")
-}
 
 //	Loop through the TV series information in the resopnse:
 for _, response := range responses {
