@@ -9,10 +9,10 @@ Be sure to `go get github.com/danesparza/tvdb` and then import the package in yo
 client := tvdb.Client{}
 request := tvdb.SeriesEpisodesRequest{Name: "Looney Tunes"}
 
-//  Search for the series
+// Search for the series
 responses, err := client.SeriesSearch(request)
 
-//	Loop through the TV series information in the resopnse:
+// Loop through the TV series information in the resopnse:
 for _, response := range responses {
   fmt.Printf("Series name: %v", response.SeriesName)
 }
