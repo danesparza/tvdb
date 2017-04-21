@@ -5,7 +5,7 @@ type SeriesRequest struct {
 	SeriesID int `json:"id"`
 }
 
-// Series represents a reponse for series information from the TVDB service
+// Series represents a response for series information from the TVDB service
 type Series struct {
 	Added           string   `json:"added"`
 	AirsDayOfWeek   string   `json:"airsDayOfWeek"`
@@ -48,7 +48,7 @@ type SeriesEpisodesRequest struct {
 	IMDBId       int `json:"imdbId"`
 }
 
-// BasicEpisode represents a reponse for episode information from the TVDB service
+// BasicEpisode represents a response for episode information from the TVDB service
 type BasicEpisode struct {
 	AbsoluteNumber     int    `json:"absoluteNumber"`
 	AiredEpisodeNumber int    `json:"airedEpisodeNumber"`
