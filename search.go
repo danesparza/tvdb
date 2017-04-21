@@ -19,7 +19,7 @@ type SeriesSearchData struct {
 	Status     string   `json:"status"`
 }
 
-// SearchResponses represents a search response from the service
+// SeriesSearchResponses represents a search response from the service
 type SeriesSearchResponses struct {
 	Data []SeriesSearchData `json:"data"`
 }

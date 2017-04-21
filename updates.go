@@ -12,7 +12,7 @@ type UpdatedResponse struct {
 	LastUpdated int `json:"lastUpdated"`
 }
 
-//Response returned by the API Server
+//UpdatedResponses contains the response returned by the API Server
 type UpdatedResponses struct {
 	Data []UpdatedResponse `json:"data"`
 }

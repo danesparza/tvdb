@@ -32,7 +32,8 @@ type Series struct {
 
 // SeriesData represents the list of responses to get series information
 type SeriesData struct {
-	Data Series `json:"data"`
+	Data   Series     `json:"data"`
+	Errors JSONErrors `json:"errors,omitempty"`
 }
 
 // SeriesEpisodesRequest represents a request to get episode information for a series
@@ -70,10 +71,21 @@ type Links struct {
 	PreviousPage int `json:"prev"`
 }
 
-// EpisodeResponses represents the list of responses to get episode information
-type EpisodeResponses struct {
-	Links Links          `json:"links"`
-	Data  []BasicEpisode `json:"data"`
+// SeriesEpisodes represents the list of responses to get episode information
+type SeriesEpisodes struct {
+	Links  Links          `json:"links"`
+	Data   []BasicEpisode `json:"data"`
+	Errors JSONErrors     `json:"errors,omitempty"`
+}
+
+// SeriesEpisodesSummary Returns a summary of the episodes and seasons available for the series.
+type SeriesEpisodesSummary struct {
+	// Number of all aired episodes for this series
+	AiredEpisodes string   `json:"airedEpisodes,omitempty"`
+	AiredSeasons  []string `json:"airedSeasons,omitempty"`
+	// Number of all dvd episodes for this series
+	DvdEpisodes string   `json:"dvdEpisodes,omitempty"`
+	DvdSeasons  []string `json:"dvdSeasons,omitempty"`
 }
 
 // SeriesActorsData contains information about a single actor
