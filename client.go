@@ -243,18 +243,18 @@ func (client *Client) EpisodesForSeries(request SeriesEpisodesRequest) ([]BasicE
 		u.RawQuery = q.Encode()
 
 		//	Prep the response object
-		episodeResponses := EpisodeResponses{}
+		object := SeriesEpisodes{}
 
 		//	Make the API call
-		if err := client.makeAPIcall(u, &episodeResponses); err != nil {
+		if err := client.makeAPIcall(u, &object); err != nil {
 			return retval, err
 		}
 
 		//	Append our results to the return value
-		retval = append(retval, episodeResponses.Data...)
+		retval = append(retval, object.Data...)
 
 		//	Update the last page variable:
-		lastPage = episodeResponses.Links.LastPage
+		lastPage = object.Links.LastPage
 	}
 
 	//	Return our response
@@ -301,6 +301,10 @@ func (client *Client) makeAPIcall(u *url.URL, model interface{}) error {
 		fmt.Printf("you've tried to use version %s of the API but the server respond's with %s\n", client.Version, res.Header.Get("X-Thetvdb-Api-Version"))
 		os.Exit(1)
 	}
+
+	// buf := new(bytes.Buffer)
+	// buf.ReadFrom(res.Body)
+	// fmt.Println(buf.String())
 
 	//	Decode the return object
 	err = json.NewDecoder(res.Body).Decode(model)
@@ -406,6 +410,42 @@ func (client *Client) GetSeriesImages(request SeriesImageQueryRequest) ([]Series
 
 	//	Prep the response object
 	object := SeriesImagesCounts{}
+
+	//	Make the API call
+	if err := client.makeAPIcall(u, &object); err != nil {
+		return retval, err
+	}
+	retval = object.Data
+
+	//	Return our response
+	return retval, nil
+}
+
+// GetEpisode gets an Single Episode by the provided EpisodeID
+func (client *Client) GetEpisode(request SeriesRequest) (Episode, error) {
+	//	Create our return value
+	retval := Episode{}
+
+	//	Initialize our client
+	if err := client.initialize(); err != nil {
+		return retval, err
+	}
+
+	//	Set the API url
+	apiURL := client.ServiceURL + fmt.Sprintf("/episodes/%v", request.SeriesID)
+
+	//	Construct our query
+	u, err := url.Parse(apiURL)
+	if err != nil {
+		return retval, err
+	}
+
+	q := u.Query()
+
+	u.RawQuery = q.Encode()
+
+	//	Prep the response object
+	object := EpisodeRecordData{}
 
 	//	Make the API call
 	if err := client.makeAPIcall(u, &object); err != nil {
