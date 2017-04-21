@@ -2,7 +2,7 @@
 TVDB v2.0 API wrapper for Go
 
 ## Installation
-`go get github.com/danesparza/tvdb` 
+`go get -u github.com/danesparza/tvdb` 
 
 ## Example
 
