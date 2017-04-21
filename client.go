@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"net/http"
 	"net/url"
+	"os"
 	"strconv"
 	"strings"
 )
@@ -16,6 +17,7 @@ import (
 var (
 	baseServiceURL = "https://api.thetvdb.com"
 	apiKey         = "CA1E4A63116B1D87"
+	apiVersion     = "2.1.2"
 )
 
 // Client is a service client to the TVDB service
@@ -23,6 +25,7 @@ type Client struct {
 	ServiceURL string
 	Token      string
 	Language   string
+	Version    string
 }
 
 // Login and get a bearer token
@@ -37,6 +40,11 @@ func (client *Client) Login(request AuthRequest) (AuthResponse, error) {
 	//	If the API url isn't set, use the default:
 	if client.ServiceURL == "" {
 		client.ServiceURL = baseServiceURL
+	}
+
+	// if the API Version isn't set, use the default:
+	if client.Version == "" {
+		client.Version = apiVersion
 	}
 
 	//	Set the API url
@@ -270,6 +278,11 @@ func (client *Client) makeAPIcall(u *url.URL, model interface{}) error {
 		req.Header.Set("Accept-Language", client.Language)
 	}
 
+	//TODO: seems like this isn't working as it should, server always responds with the latest apiVersion
+	if client.Version != "" {
+		req.Header.Set("Accept", "application/vnd.thetvdb.v"+client.Version)
+	}
+
 	//	Make the request:
 	res, err := httpClient.Do(req)
 	if res != nil {
@@ -281,6 +294,12 @@ func (client *Client) makeAPIcall(u *url.URL, model interface{}) error {
 
 	if res.StatusCode != 200 {
 		return fmt.Errorf("Call not successful: %v", res.Status)
+	}
+
+	// check if the requested version of the API matches with the one provided by the Server
+	if res.Header.Get("X-Thetvdb-Api-Version") != client.Version {
+		fmt.Printf("you've tried to use version %s of the API but the server respond's with %s\n", client.Version, res.Header.Get("X-Thetvdb-Api-Version"))
+		os.Exit(1)
 	}
 
 	//	Decode the return object
